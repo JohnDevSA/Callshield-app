@@ -1,0 +1,40 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+.vscode
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Capacitor native projects (generated)
+android/
+ios/
+
+
+# IDE
+*.sublime-workspace
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build artifacts
+*.tgz
