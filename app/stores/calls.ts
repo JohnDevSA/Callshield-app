@@ -119,7 +119,10 @@ export const useCallsStore = defineStore('calls', () => {
     );
 
     if (index !== -1) {
-      callHistory.value[index].userFeedback = isSafe ? 'safe' : 'spam';
+      const call = callHistory.value[index];
+      if (call) {
+        call.userFeedback = isSafe ? 'safe' : 'spam';
+      }
     }
   }
 

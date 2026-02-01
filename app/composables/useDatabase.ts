@@ -193,8 +193,9 @@ export function useDatabase() {
 
   async function updateSettings(updates: Partial<UserSettings>): Promise<void> {
     const settings = await database.settings.toArray();
-    if (settings.length > 0 && settings[0].id) {
-      await database.settings.update(settings[0].id, updates);
+    const firstSetting = settings[0];
+    if (firstSetting?.id !== undefined) {
+      await database.settings.update(firstSetting.id, updates);
     }
   }
 

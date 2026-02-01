@@ -1,8 +1,34 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { home, search, ban, settings } from 'ionicons/icons';
+import { useAppStore } from '~/stores/app';
+import { useBlockedStore } from '~/stores/blocked';
 
 const route = useRoute();
+const appStore = useAppStore();
+const blockedStore = useBlockedStore();
+
+// Handle incoming call overlay actions
+async function handleAnswer() {
+  appStore.hideIncomingCallOverlay();
+  // Native call answering would be handled by the platform
+}
+
+function handleDecline() {
+  appStore.hideIncomingCallOverlay();
+  // Native call declining would be handled by the platform
+}
+
+async function handleBlock() {
+  if (appStore.incomingCall) {
+    await blockedStore.addBlockedNumber(
+      appStore.incomingCall.phoneNumber,
+      appStore.incomingCall.lookup?.name,
+      'Blocked during incoming call'
+    );
+  }
+  appStore.hideIncomingCallOverlay();
+}
 
 const tabs = [
   { path: '/', label: 'Calls', icon: home },
@@ -14,6 +40,15 @@ const tabs = [
 
 <template>
   <div class="flex flex-col h-screen">
+    <!-- Incoming call overlay -->
+    <IncomingCallOverlay
+      v-if="appStore.showCallOverlay && appStore.incomingCall"
+      :context="appStore.incomingCall"
+      @answer="handleAnswer"
+      @decline="handleDecline"
+      @block="handleBlock"
+    />
+
     <div class="flex-1 overflow-auto">
       <slot />
     </div>
