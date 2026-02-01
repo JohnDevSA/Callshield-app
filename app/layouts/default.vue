@@ -3,15 +3,27 @@ import { IonIcon } from '@ionic/vue';
 import { home, search, ban, settings } from 'ionicons/icons';
 import { useAppStore } from '~/stores/app';
 import { useBlockedStore } from '~/stores/blocked';
+import { useCallsStore } from '~/stores/calls';
+import { useToast } from '~/composables/useToast';
 
 const route = useRoute();
 const appStore = useAppStore();
 const blockedStore = useBlockedStore();
+const callsStore = useCallsStore();
+const toast = useToast();
 
 // Handle incoming call overlay actions
 async function handleAnswer() {
+  const phoneNumber = appStore.incomingCall?.phoneNumber;
   appStore.hideIncomingCallOverlay();
   // Native call answering would be handled by the platform
+  // After call ends, show post-call feedback (simulated here)
+  if (phoneNumber && !appStore.incomingCall?.isContact) {
+    // In real app, this would be triggered when call ends
+    setTimeout(() => {
+      appStore.showPostCallFeedbackModal(phoneNumber);
+    }, 2000);
+  }
 }
 
 function handleDecline() {
@@ -26,8 +38,36 @@ async function handleBlock() {
       appStore.incomingCall.lookup?.name,
       'Blocked during incoming call'
     );
+    toast.success('Number blocked successfully');
   }
   appStore.hideIncomingCallOverlay();
+}
+
+// Handle post-call feedback actions
+async function handleFeedbackSafe() {
+  if (appStore.postCallFeedbackNumber) {
+    await callsStore.submitFeedback(appStore.postCallFeedbackNumber, true);
+    toast.success('Marked as safe');
+  }
+  appStore.hidePostCallFeedbackModal();
+}
+
+async function handleFeedbackSpam() {
+  if (appStore.postCallFeedbackNumber) {
+    await callsStore.submitFeedback(appStore.postCallFeedbackNumber, false);
+    // Optionally block the number
+    await blockedStore.addBlockedNumber(
+      appStore.postCallFeedbackNumber,
+      undefined,
+      'Reported as spam'
+    );
+    toast.warning('Reported as spam and blocked');
+  }
+  appStore.hidePostCallFeedbackModal();
+}
+
+function handleFeedbackDismiss() {
+  appStore.hidePostCallFeedbackModal();
 }
 
 const tabs = [
@@ -47,6 +87,15 @@ const tabs = [
       @answer="handleAnswer"
       @decline="handleDecline"
       @block="handleBlock"
+    />
+
+    <!-- Post-call feedback modal -->
+    <PostCallFeedback
+      v-if="appStore.showPostCallFeedback && appStore.postCallFeedbackNumber"
+      :phone-number="appStore.postCallFeedbackNumber"
+      @safe="handleFeedbackSafe"
+      @spam="handleFeedbackSpam"
+      @dismiss="handleFeedbackDismiss"
     />
 
     <div class="flex-1 overflow-auto">

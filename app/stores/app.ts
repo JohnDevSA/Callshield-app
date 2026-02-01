@@ -14,6 +14,10 @@ export const useAppStore = defineStore('app', () => {
   const incomingCall = ref<IncomingCallContext | null>(null);
   const showCallOverlay = ref(false);
 
+  // Post-call feedback state
+  const postCallFeedbackNumber = ref<string | null>(null);
+  const showPostCallFeedback = ref(false);
+
   // Sync status
   const syncStatus = ref<SyncStatus>({
     lastSync: null,
@@ -114,6 +118,17 @@ export const useAppStore = defineStore('app', () => {
     incomingCall.value = null;
   }
 
+  // Post-call feedback handling
+  function showPostCallFeedbackModal(phoneNumber: string) {
+    postCallFeedbackNumber.value = phoneNumber;
+    showPostCallFeedback.value = true;
+  }
+
+  function hidePostCallFeedbackModal() {
+    showPostCallFeedback.value = false;
+    postCallFeedbackNumber.value = null;
+  }
+
   // Sync functions
   async function syncDatabase() {
     if (!isOnline.value) {
@@ -144,6 +159,8 @@ export const useAppStore = defineStore('app', () => {
     appVersion,
     incomingCall,
     showCallOverlay,
+    postCallFeedbackNumber,
+    showPostCallFeedback,
     syncStatus,
 
     // Computed
@@ -153,6 +170,8 @@ export const useAppStore = defineStore('app', () => {
     initializeApp,
     showIncomingCallOverlay,
     hideIncomingCallOverlay,
+    showPostCallFeedbackModal,
+    hidePostCallFeedbackModal,
     syncDatabase,
     updateSyncStatus
   };
