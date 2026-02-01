@@ -2,6 +2,7 @@
 import { IonIcon } from '@ionic/vue';
 import { call, checkmarkCircle, alertCircle, helpCircle } from 'ionicons/icons';
 import type { CallRecord } from '~/types';
+import { formatPhoneNumber } from '~/composables/useDatabase';
 
 defineProps<{
   record: CallRecord;

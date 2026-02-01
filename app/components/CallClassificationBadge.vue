@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { IonIcon } from '@ionic/vue';
 import { checkmarkCircle, alertCircle, helpCircle, call, ban } from 'ionicons/icons';
 import type { SpamClassification } from '~/types';
