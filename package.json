@@ -59,6 +59,7 @@
     "@nuxtjs/tailwindcss": "^6.13.0",
     "@pinia/testing": "^1.0.3",
     "@vitejs/plugin-vue": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.4.0",
